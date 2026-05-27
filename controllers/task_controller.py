@@ -1,9 +1,13 @@
 from sqlalchemy.orm import Session
-from models.task_model import Task
+from models.task_model import Task,Priority
 from fastapi import HTTPException, status
 
 
 class TaskController:
+    @staticmethod
+    def get_priorities(db: Session):
+        return db.query(Priority).all()
+
     @staticmethod
     def create_task(db: Session, task_data: dict):
         new_task = Task(

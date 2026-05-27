@@ -20,6 +20,13 @@ class TaskUpdate(BaseModel):
     state_id: int = Field(None)
 
 
+@router.get("/priorities")
+def list_priorities(
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user_id),
+):
+    return TaskController.get_priorities(db)
+
 @router.post("/")
 def create_task(task: TaskCreate, db: Session = Depends(get_db), user_id: int = Depends(get_current_user_id)):
     task_data = task.dict()
