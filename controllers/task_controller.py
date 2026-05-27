@@ -28,13 +28,26 @@ class TaskController:
         }
 
     @staticmethod
-    def get_tasks(db: Session, user_id: int = None):
-        query = db.query(Task)
-
-        if user_id:
-            query = query.filter(Task.user_id == user_id)
-
-        return query.all()
+    def get_tasks(db: Session, user_id: int = None, state_id: int = None, priority_id: int = None, page: int = 1, limit: int = 10):
+        query = db.query(Task).filter(Task.user_id == user_id)
+ 
+        if state_id is not None:
+            query = query.filter(Task.state_id == state_id)
+ 
+        if priority_id is not None:
+            query = query.filter(Task.priority_id == priority_id)
+ 
+        total = query.count()
+        pages = -(-total // limit)
+        tasks = query.offset((page - 1) * limit).limit(limit).all()
+ 
+        return {
+            "data": tasks,
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "pages": pages,
+        }
 
     @staticmethod
     def update_task(db: Session, task_id: int, task_data: dict, user_id: int):

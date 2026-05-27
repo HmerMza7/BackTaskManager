@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from config.database import get_db
 from controllers.task_controller import TaskController
 from pydantic import BaseModel, Field
 from dependencies.auth import get_current_user_id
+from typing import Optional
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -28,10 +29,15 @@ def list_priorities(
     return TaskController.get_priorities(db)
 
 @router.post("/")
-def create_task(task: TaskCreate, db: Session = Depends(get_db), user_id: int = Depends(get_current_user_id)):
-    task_data = task.dict()
-    task_data["user_id"] = user_id
-    return TaskController.create_task(db, task_data)
+def list_tasks(
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user_id),
+    state_id: Optional[int] = Query(None, description="Filter by state (1=pendiente, 2=completada)"),
+    priority_id: Optional[int] = Query(None, description="Filter by priority (1=baja, 2=media, 3=alta)"),
+    page: int = Query(1, ge=1, description="Page number"),
+    limit: int = Query(10, ge=1, le=100, description="Results per page"),
+):
+    return TaskController.get_tasks(db, user_id, state_id, priority_id, page, limit)
 
 @router.get("/")
 def list_tasks(db: Session = Depends(get_db), user_id: int = Depends(get_current_user_id)):
