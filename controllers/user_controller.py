@@ -30,5 +30,5 @@ class UserController:
                 detail="Incorrect username or password"
             )
         
-        token = AuthService.create_access_token(data={"sub": user.username})
+        token = AuthService.create_access_token(data={"sub": str(user.id)})
         return {"access_token": token, "token_type": "bearer"}

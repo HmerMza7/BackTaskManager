@@ -33,10 +33,13 @@ class TaskController:
         return query.all()
 
     @staticmethod
-    def update_task(db: Session, task_id: int, task_data: dict):
+    def update_task(db: Session, task_id: int, task_data: dict, user_id: int):
         task = db.query(Task).filter(Task.id == task_id).first()
         if not task:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+        
+        if task.user_id != user_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have permission to edit this task")
 
         for key, value in task_data.items():
             setattr(task, key, value)
@@ -46,10 +49,13 @@ class TaskController:
         return {"message": "Task updated successfully", "task": task}
 
     @staticmethod
-    def delete_task(db: Session, task_id: int):
+    def delete_task(db: Session, task_id: int,user_id: int):
         task = db.query(Task).filter(Task.id == task_id).first()
         if not task:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+
+        if task.user_id != user_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have permission to delete this task")
 
         db.delete(task)
         db.commit()
