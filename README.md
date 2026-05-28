@@ -40,6 +40,8 @@ cd BackTaskManager
 
 ```bash
 python -m venv venv
+o
+py -m venv venv
 
 # Windows
 venv\Scripts\activate
@@ -75,6 +77,13 @@ ACCESS_TOKEN_EXPIRE_MINUTES=60
 mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS taskmanager;"
 mysql -u root -p taskmanager < schema.sql
 ```
+
+En caso de utilizar una interfaz grafica,
+ejecutar los siguientes comandos en el editor SQL
+
+CREATE DATABASE IF NOT EXISTS taskmanager;
+
+despues ejecutar el contenido del archivo schema.sql
 
 ### 6. Correr el servidor
 
