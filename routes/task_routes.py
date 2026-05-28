@@ -51,4 +51,10 @@ def update_task(task_id: int, task: TaskUpdate, db: Session = Depends(get_db), u
 def delete_task(task_id: int, db: Session = Depends(get_db), user_id: int = Depends(get_current_user_id)):
     return TaskController.delete_task(db, task_id, user_id)
 
+@router.get("/states")
+def list_states(
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user_id),
+):
+    return TaskController.get_states(db)
 

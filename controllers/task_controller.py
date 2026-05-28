@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models.task_model import Task,Priority
+from models.task_model import Task,Priority,StateTask
 from fastapi import HTTPException, status
 
 
@@ -77,3 +77,7 @@ class TaskController:
         db.delete(task)
         db.commit()
         return {"message": "Task deleted successfully"}
+    
+    @staticmethod
+    def get_states(db: Session):
+        return db.query(StateTask).all()
