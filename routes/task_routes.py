@@ -28,20 +28,26 @@ def list_priorities(
 ):
     return TaskController.get_priorities(db)
 
-@router.post("/")
+@router.get("/")
 def list_tasks(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user_id),
     state_id: Optional[int] = Query(None, description="Filter by state (1=pendiente, 2=completada)"),
-    priority_id: Optional[int] = Query(None, description="Filter by priority (1=baja, 2=media, 3=alta)"),
+    priority_id: Optional[int] = Query(None, description="Filter by priority (1=alta, 2=media, 3=baja)"),
     page: int = Query(1, ge=1, description="Page number"),
     limit: int = Query(10, ge=1, le=100, description="Results per page"),
 ):
     return TaskController.get_tasks(db, user_id, state_id, priority_id, page, limit)
 
-@router.get("/")
-def list_tasks(db: Session = Depends(get_db), user_id: int = Depends(get_current_user_id)):
-    return TaskController.get_tasks(db, user_id)
+@router.post("/")
+def create_task(
+    task: TaskCreate,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user_id),
+):
+    task_data = task.dict()
+    task_data["user_id"] = user_id
+    return TaskController.create_task(db, task_data)
 
 @router.put("/{task_id}")
 def update_task(task_id: int, task: TaskUpdate, db: Session = Depends(get_db), user_id: int = Depends(get_current_user_id)):
